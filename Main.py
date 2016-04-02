@@ -48,20 +48,22 @@ class Main:
 		# Check for LED button input
 		for led in range(len(self.ledButtons)):
 			if self.ledButtons[led].getInput() == True:
-				# If button pressed, cycle through colors
+				# If button pressed, cycle through colors and increment state
 				self.leds[led].increment()
-
-		# Store current input state
-			# Update LEDs
-		# If commit button is pressed
+		# Check if commit button is pressed
 		if commitButton.getInput():
-			self.states = self.getLEDStates()
 			# check for valid input
+			if self.getLEDStates() != False
+				self.states = self.getLEDStates()
 				# Pass input to the game
+				game.makeMove(self.states)
 				# Update the game
+
 				# Check for game over
+				if game.gameOver():
+					# do stuff
 		# Update LEDs
-		self.redraw()
+		self.redrawAll()
 		self.canvas.after(self.timerDelay, self.timerFired)
 
 	def redrawAll(self):
