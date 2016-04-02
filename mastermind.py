@@ -11,7 +11,8 @@ class Mastermind(object):
         self.exact = 0
         self.offPlace = 0
         self.win = False  # use this  to check for win whe gameOver returns True 
-        
+        maxNoGuesses=8
+        self.board=[self.guess for i in range(maxNoGuesses)]
 
     def makeMove(self,states):
         gameLength=4
