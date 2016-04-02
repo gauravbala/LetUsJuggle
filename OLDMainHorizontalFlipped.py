@@ -172,7 +172,7 @@ class Main:
             for circle in range(4):
                 diameter = self.topMargin - 4*self.margin
                 x0 = self.topMargin/2 - diameter/2
-                y0 = self.windowHeight/2 - self.margin - (circle*(diameter+self.margin))
+                y0 = self.windowHeight - self.margin - (circle*(diameter+self.margin))
                 self.canvas.create_oval(x0, y0, x0+diameter, y0+diameter, fill=self.game.code[circle])
 
 
