@@ -144,18 +144,8 @@ class Main:
         return (x0, y0, x1, y1)
 
     def getLightFill(self, row):
-        guessDict = {"red":0, "white":0, "black":0}
+        guessDict = {"red":self.exact, "white":self.offPlace, "black":4-self.exact-self.offPlace}
         finalResultCopy = copy.copy(self.game.code)
-        for circle in range(4):
-            if (self.game.board[row][circle] == finalResultCopy[circle]):
-                guessDict["red"] += 1
-                finalResultCopy[circle] = None
-            elif (self.game.board[row][circle] in finalResultCopy):
-                guessDict["white"] += 1
-                index = finalResultCopy.index(self.game.board[row][circle])
-                finalResultCopy[index] = None
-            else:
-                guessDict["black"] += 1
         returnList = [ ]
         if (guessDict["red"]   != 0): returnList += ["red"]  *(guessDict["red"])
         if (guessDict["white"] != 0): returnList += ["white"]*(guessDict["white"])
