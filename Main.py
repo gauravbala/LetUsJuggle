@@ -39,6 +39,13 @@ class Main:
 		self.canvas.pack()
 		self.timerDelay = 10 #ms
 
+		#draw board
+		self.margin = 10
+		self.topMargin = 70
+		self.resultMargin = 150
+		self.guessHeights = 80
+
+
 	def run(self):
 		# Starts update and Tkinter loops
 		self.timerFired()
@@ -65,7 +72,11 @@ class Main:
 
 	def redrawAll(self):
 		self.canvas.delete(ALL)
-		# Drawing code here
+		self.drawBoard()
+		self.drawPinsInBoard()
+		self.drawGuessResults()
+		if (self.game.gameOver()):
+			self.drawFinalResult()
 		self.canvas.update()
 
 	def getLEDStates(self):
@@ -76,6 +87,95 @@ class Main:
 				return False
 			states.append(led.state)
 		return states
+
+
+	def drawBoard(self):
+		self.canvas.create_rectangle(0, 0, self.width, self.height, fill="DarkOrange2", 
+			outline="DarkOrange2")
+		self.canvas.create_rectangle(self.margin, self.topMargin, self.width-self.resultMargin, 
+			self.height-self.margin, fill="sandy brown", outline="saddle brown")
+		self.canvas.create_rectangle(self.width-self.resultMargin, self.topMargin,
+			self.width-self.margin, self.height-self.margin, fill="NavajoWhite2", 
+			outline="saddle brown")
+
+	def drawPinsInBoard(self):
+		for row in range(8):
+			for circle in range(4):
+				(x0, y0, x1, y1) = getGuessCoords(self, row, circle)
+				try:
+					fill = self.pinsInBoard[row][circle]                
+				except:
+					fill = "black"
+				self.canvas.create_oval(x0, y0, x1, y1, fill=fill)
+
+	def getGuessCoords(self, row, circle):
+		self.lightMargin = 10
+		width = ((self.width-self.resultMargin) - (self.margin)) / 4
+		x0 = self.margin + self.lightMargin + (circle*width)
+		x1 = x0 + width - (2*self.lightMargin)
+		y0 = self.height - self.margin - self.lightMargin - (row*self.guessHeights)
+		y1 = y0 - self.guessHeights + (2*self.lightMargin)
+		return (x0, y0, x1, y1)
+
+
+
+	def drawGuessResults(self):
+		for row in range(8):
+			fillList = getLightFill(self, row)
+			for circle in range(4):
+				(x0, y0, x1, y1) = getLightCoords(self, row, circle)
+				self.canvas.create_oval(x0, y0, x1, y1, fill=fillList[circle])
+
+	def getLightCoords(self, row, circle):
+		width = self.resultMargin - self.margin
+		diameter = width/4 - 2*self.margin
+		x0 = self.width - self.resultMargin + self.margin + (circle*(width/4))
+		x1 = x0 + diameter
+		y0 = self.height - self.margin - (row*self.guessHeights) - self.guessHeights/2 - diameter/2
+		y1 = y0 + diameter
+		return (x0, y0, x1, y1)
+
+	def getLightFill(self, row):
+		try:
+			guessDict = {"red":0, "white":0, "black":0}
+			finalResultCopy = copy.copy(self.game.code)
+			for circle in range(4):
+				if (self.pinsInBoard[row][circle] == finalResultCopy[circle]):
+					guessDict["red"] += 1
+					finalResultCopy[circle] = None
+				elif (self.pinsInBoard[row][circle] in finalResultCopy):
+					guessDict["white"] += 1
+					index = finalResultCopy.index(self.pinsInBoard[row][circle])
+					finalResultCopy[index] = None
+				else:
+					guessDict["black"] += 1
+			returnList = [ ]
+			for value in guessDict:
+				if (guessDict[value] != 0):
+					returnList += [value]*(guessDict[value])
+			return returnList
+		except:
+			return ["gray"] * 4
+
+
+	def drawFinalResult(self):
+		if (self.game.win):
+			self.canvas.create_text(self.width/2, self.topMargin/2, text="YOU WIN!", 
+				font="Courier 18")
+		else:
+			self.canvas.create_text(self.width/2-self.margin, self.topMargin/2, anchor=E, 
+				text="YOU LOSE, RESULT WAS:", font="Courier 18")
+			for circle in range(4):
+				diameter = self.topMargin - 2*self.margin
+				x0 = self.width/2+(circle*(diameter+self.lightMargin))
+				y0 = self.margin
+				self.canvas.create_oval(x0, y0, x0+diameter, y0+diameter, fill=self.game.code[circle])
+
+
+
+
+
+
 
 main = Main()
 main.run()

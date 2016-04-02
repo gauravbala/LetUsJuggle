@@ -7,9 +7,7 @@ import copy
 
 def init(data):
     # load data.xyz as appropriate
-    data.finalResult = [ ]
     data.pinsInBoard = [ ]
-    data.guessResults = [ ]
 
     #draw board
     data.margin = 10
@@ -17,7 +15,6 @@ def init(data):
     data.resultMargin = 150
     data.guessHeights = 80
 
-    data.endGame = "win"
 
 def mousePressed(event, data):
     # use event.x and event.y
@@ -33,12 +30,7 @@ def redrawAll(canvas, data):
     drawBoard(canvas, data)
     drawPinsInBoard(canvas, data)
     drawGuessResults(canvas, data)
-    if (len(data.guessResults) == 8):
-        if (data.guessResults[8] == data.finalResult):
-            data.endGame = "win"
-        else:
-            data.endGame = "lose"
-    if (data.endGame):
+    if (self.game.gameOver()):
         drawFinalResult(canvas, data)
 
 
@@ -94,7 +86,7 @@ def getLightCoords(data, row, circle):
 def getLightFill(data, row):
     try:
         guessDict = {"red":0, "white":0, "black":0}
-        finalResultCopy = copy.copy(data.finalResult)
+        finalResultCopy = copy.copy(self.game.code)
         for circle in range(4):
             if (data.pinsInBoard[row][circle] == finalResultCopy[circle]):
                 guessDict["red"] += 1
@@ -115,7 +107,7 @@ def getLightFill(data, row):
 
 
 def drawFinalResult(canvas, data):
-    if (data.endGame == "win"):
+    if (self.game.win):
         canvas.create_text(data.width/2, data.topMargin/2, text="YOU WIN!", 
             font="Courier 18")
     else:
@@ -125,7 +117,7 @@ def drawFinalResult(canvas, data):
             diameter = data.topMargin - 2*data.margin
             x0 = data.width/2+(circle*(diameter+data.lightMargin))
             y0 = data.margin
-            canvas.create_oval(x0, y0, x0+diameter, y0+diameter, fill=data.finalResult[circle])
+            canvas.create_oval(x0, y0, x0+diameter, y0+diameter, fill=self.game.code[circle])
 
 
 
