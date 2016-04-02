@@ -88,7 +88,6 @@ class Main:
 			states.append(led.state)
 		return states
 
-
 	def drawBoard(self):
 		self.canvas.create_rectangle(0, 0, self.width, self.height, fill="DarkOrange2", 
 			outline="DarkOrange2")
@@ -101,7 +100,7 @@ class Main:
 	def drawPinsInBoard(self):
 		for row in range(8):
 			for circle in range(4):
-				(x0, y0, x1, y1) = getGuessCoords(self, row, circle)
+				(x0, y0, x1, y1) = self.getGuessCoords(row, circle)
 				try:
 					fill = self.pinsInBoard[row][circle]                
 				except:
@@ -117,13 +116,11 @@ class Main:
 		y1 = y0 - self.guessHeights + (2*self.lightMargin)
 		return (x0, y0, x1, y1)
 
-
-
 	def drawGuessResults(self):
 		for row in range(8):
-			fillList = getLightFill(self, row)
+			fillList = self.getLightFill(row)
 			for circle in range(4):
-				(x0, y0, x1, y1) = getLightCoords(self, row, circle)
+				(x0, y0, x1, y1) = self.getLightCoords(row, circle)
 				self.canvas.create_oval(x0, y0, x1, y1, fill=fillList[circle])
 
 	def getLightCoords(self, row, circle):
@@ -157,7 +154,6 @@ class Main:
 		except:
 			return ["gray"] * 4
 
-
 	def drawFinalResult(self):
 		if (self.game.win):
 			self.canvas.create_text(self.width/2, self.topMargin/2, text="YOU WIN!", 
@@ -170,11 +166,6 @@ class Main:
 				x0 = self.width/2+(circle*(diameter+self.lightMargin))
 				y0 = self.margin
 				self.canvas.create_oval(x0, y0, x0+diameter, y0+diameter, fill=self.game.code[circle])
-
-
-
-
-
 
 
 main = Main()
