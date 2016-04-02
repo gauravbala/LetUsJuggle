@@ -26,8 +26,12 @@ class Main:
 		# Tk interface
 		self.root = Tk()
 		self.root.title("Mastermind")
-		self.windowWidth = 800
-		self.windowHeight = 480
+		self.windowWidth = 480
+		self.windowHeight = 800
+		self.margin = 10
+		self.topMargin = 70
+		self.resultMargin = 150
+		self.guessHeights = 80
 		# Run this code if on the raspberry pi
 		if sys.platform.startswith('linux'):
 			self.root.minsize(width=self.windowWidth, height=self.windowHeight)
@@ -35,16 +39,9 @@ class Main:
 			self.root.attributes('-fullscreen', True)
 			# Exit fullscreen with Esc
 			self.root.bind("<Escape>", lambda: self.root.attributes("-fullscreen", False))
-		self.canvas = Canvas(self.root, width=self.windowWidth, height=self.windowHeight, background="black")
+		self.canvas = Canvas(self.root, width=self.windowWidth, height=self.windowHeight, background="DarkOrange2")
 		self.canvas.pack()
 		self.timerDelay = 10 #ms
-
-		#draw board
-		self.margin = 10
-		self.topMargin = 70
-		self.resultMargin = 150
-		self.guessHeights = 80
-
 
 	def run(self):
 		# Starts update and Tkinter loops
@@ -52,7 +49,7 @@ class Main:
 		self.root.mainloop()
 
 	def timerFired(self):
-		if self.game.gameOver():
+		if not self.game.gameOver():
 			# Check for LED button input
 			for led in range(len(self.ledButtons)):
 				# On when false due to pull up
@@ -89,12 +86,12 @@ class Main:
 		return states
 
 	def drawBoard(self):
-		self.canvas.create_rectangle(0, 0, self.width, self.height, fill="DarkOrange2", 
-			outline="DarkOrange2")
-		self.canvas.create_rectangle(self.margin, self.topMargin, self.width-self.resultMargin, 
-			self.height-self.margin, fill="sandy brown", outline="saddle brown")
-		self.canvas.create_rectangle(self.width-self.resultMargin, self.topMargin,
-			self.width-self.margin, self.height-self.margin, fill="NavajoWhite2", 
+		# Guess column
+		self.canvas.create_rectangle(self.margin, self.topMargin, self.windowWidth-self.resultMargin, 
+			self.windowHeight-self.margin, fill="sandy brown", outline="saddle brown")
+		# Result column
+		self.canvas.create_rectangle(self.windowWidth-self.resultMargin, self.topMargin,
+			self.windowWidth-self.margin, self.windowHeight-self.margin, fill="NavajoWhite2", 
 			outline="saddle brown")
 
 	def drawPinsInBoard(self):
@@ -102,17 +99,17 @@ class Main:
 			for circle in range(4):
 				(x0, y0, x1, y1) = self.getGuessCoords(row, circle)
 				try:
-					fill = self.pinsInBoard[row][circle]                
+					fill = self.game.board[row][circle]                
 				except:
 					fill = "black"
 				self.canvas.create_oval(x0, y0, x1, y1, fill=fill)
 
 	def getGuessCoords(self, row, circle):
 		self.lightMargin = 10
-		width = ((self.width-self.resultMargin) - (self.margin)) / 4
+		width = ((self.windowWidth-self.resultMargin) - (self.margin)) / 4
 		x0 = self.margin + self.lightMargin + (circle*width)
 		x1 = x0 + width - (2*self.lightMargin)
-		y0 = self.height - self.margin - self.lightMargin - (row*self.guessHeights)
+		y0 = self.windowHeight - self.margin - self.lightMargin - (row*(self.guessHeights+self.guessHeights/8))
 		y1 = y0 - self.guessHeights + (2*self.lightMargin)
 		return (x0, y0, x1, y1)
 
@@ -126,9 +123,9 @@ class Main:
 	def getLightCoords(self, row, circle):
 		width = self.resultMargin - self.margin
 		diameter = width/4 - 2*self.margin
-		x0 = self.width - self.resultMargin + self.margin + (circle*(width/4))
+		x0 = self.windowWidth - self.resultMargin + self.margin + (circle*(width/4))
 		x1 = x0 + diameter
-		y0 = self.height - self.margin - (row*self.guessHeights) - self.guessHeights/2 - diameter/2
+		y0 = self.windowHeight - self.margin - (row*(self.guessHeights+self.guessHeights/8)) - self.guessHeights/2 - diameter/2
 		y1 = y0 + diameter
 		return (x0, y0, x1, y1)
 
@@ -137,12 +134,12 @@ class Main:
 			guessDict = {"red":0, "white":0, "black":0}
 			finalResultCopy = copy.copy(self.game.code)
 			for circle in range(4):
-				if (self.pinsInBoard[row][circle] == finalResultCopy[circle]):
+				if (self.game.board[row][circle] == finalResultCopy[circle]):
 					guessDict["red"] += 1
 					finalResultCopy[circle] = None
-				elif (self.pinsInBoard[row][circle] in finalResultCopy):
+				elif (self.game.board[row][circle] in finalResultCopy):
 					guessDict["white"] += 1
-					index = finalResultCopy.index(self.pinsInBoard[row][circle])
+					index = finalResultCopy.index(self.game.board[row][circle])
 					finalResultCopy[index] = None
 				else:
 					guessDict["black"] += 1
@@ -156,14 +153,14 @@ class Main:
 
 	def drawFinalResult(self):
 		if (self.game.win):
-			self.canvas.create_text(self.width/2, self.topMargin/2, text="YOU WIN!", 
-				font="Courier 18")
+			self.canvas.create_text(self.windowWidth/2, self.topMargin/2, text="YOU WIN!", 
+				font="Courier 10")
 		else:
-			self.canvas.create_text(self.width/2-self.margin, self.topMargin/2, anchor=E, 
-				text="YOU LOSE, RESULT WAS:", font="Courier 18")
+			self.canvas.create_text(self.windowWidth/2-self.margin, self.topMargin/2, anchor=E, 
+				text="YOU LOSE\nRESULT WAS:", font="Courier 10")
 			for circle in range(4):
 				diameter = self.topMargin - 2*self.margin
-				x0 = self.width/2+(circle*(diameter+self.lightMargin))
+				x0 = self.windowWidth/2+(circle*(diameter+self.lightMargin))
 				y0 = self.margin
 				self.canvas.create_oval(x0, y0, x0+diameter, y0+diameter, fill=self.game.code[circle])
 

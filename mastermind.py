@@ -4,15 +4,17 @@ import random
 class Mastermind(object):
 
     def __init__(self):
-        self.colors = ["red","green","blue","pink","cyan","yellow"] # list of LED colors
+        self.colors = ["red","green","blue","pink","cyan","yellow", "white"] # list of LED colors
         self.code = [random.choice(self.colors) for i  in range(len(self.colors))]
-        self.guess = [None]*4
+        self.guess = ["black"]*4
         self.turns = 1
         self.exact = 0
         self.offPlace = 0
         self.win = False  # use this  to check for win whe gameOver returns True 
         maxNoGuesses=8
         self.board=[self.guess for i in range(maxNoGuesses)]
+        # test
+        self.board[0] = [random.choice(self.colors) for i  in range(len(self.colors))]
 
     def makeMove(self,states):
         gameLength=4
@@ -41,6 +43,9 @@ class Mastermind(object):
                     self.offPlace += 1
 
     def gameOver(self):
+        # test
+        return True
+        
         if self.code == self.guess:
             self.win = True
             return True
