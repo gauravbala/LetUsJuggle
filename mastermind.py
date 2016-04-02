@@ -4,22 +4,23 @@ import random
 class Mastermind(object):
 
     def __init__(self):
-        self.colors = ["white","cyan","pink","yellow","blue","green","red"] # list of LED colors
+        self.colors = ["white","cyan","yellow","pink","blue","green","red"] # list of LED colors
         self.gameLength = 4
         self.code = [random.choice(self.colors) for i  in range(self.gameLength)]
         self.guess = ["black"]*self.gameLength
-        self.turns = 1
+        self.turns = 0
         self.exact = 0
         self.offPlace = 0
         self.win = False  # use this  to check for win whe gameOver returns True 
-        self.maxNoGuesses=8
-        self.board=[self.guess for i in range(self.maxNoGuesses)]
+        self.maxNoGuesses=7
+        self.board=[["black","black","black","black"] for i in range(self.maxNoGuesses)]
 
     def makeMove(self,states):
         self.checkMove()  # updating the number of exact and offplace matches
         for index in range(self.gameLength):
             self.guess[index]=self.colors[states[index]] # update guess for individual checking
-            self.board[self.turns][index]=self.colors[states[index]] # update board for drawing on screen
+        self.board[self.turns] = self.guess # update board for drawing on screen
+        self.guess = ["black"]*self.gameLength
         self.turns+=1
 
 
