@@ -12,9 +12,14 @@ class Mastermind(object):
         self.offPlace = 0
         self.win = False  # use this  to check for win whe gameOver returns True 
 
-    def makeMove(self):
-        # update guess through LEDs
-        self.turns += 1
+    def makeMove(self,states):
+        gameLength=4
+        self.checkMove()  # updating the number of exact and offplace matches
+        for index in range(gameLength):
+            self.guess[index]=self.colors[states[index]] # update guess for individual checking
+            self.board[self.turns][index]=self.colors[states[index]] # update board for drawing on screen
+        self.turns+=1
+
 
     def checkMove(self):
         self.exactMatches()
