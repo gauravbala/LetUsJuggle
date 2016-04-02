@@ -3,9 +3,13 @@ import sys
 from mastermind import *
 from Mastermind_Hardware import *
 import copy
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
 
 class Main:
-
+        
     def __init__(self, game=None, leds=None, buttons=None):
         self.game = Mastermind()
 
@@ -39,18 +43,24 @@ class Main:
             self.root.maxsize(width=self.windowWidth, height=self.windowHeight)
             self.root.attributes('-fullscreen', True)
             # Exit fullscreen with Esc
-            self.root.bind("<Escape>", lambda: self.root.attributes("-fullscreen", False))
+            self.root.bind("<Escape>", lambda x: self.root.attributes("-fullscreen", False))
         self.canvas = Canvas(self.root, width=self.windowWidth, height=self.windowHeight, 
             background="DarkOrange2")
         self.canvas.pack()
         self.timerDelay = 10 #ms
 
+    def on_closing(self):
+        GPIO.cleanup()
+        self.root.destroy()
+        
     def run(self):
         # Starts update and Tkinter loops
         self.timerFired()
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.mainloop()
 
     def timerFired(self):
+        print(self.getLEDStates())
         if not self.game.gameOver():
             # Check for LED button input
             for led in range(len(self.ledButtons)):
@@ -59,7 +69,7 @@ class Main:
                     # If button pressed, cycle through colors and increment state
                     self.leds[led].increment()
             # Check if commit button is pressed
-            if commitButton.getInput() == False:
+            if self.commitButton.getInput() == False:
                 # Check for valid input
                 if self.getLEDStates() != False:
                     self.states = self.getLEDStates()
