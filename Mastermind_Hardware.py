@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
+GPIO.cleanup()
 GPIO.setmode(GPIO.BCM)
 
 class LED(object):
@@ -10,6 +11,7 @@ class LED(object):
         self.pin3 = pin3
         self.outputValues = [False,False,False]
         self.state = 0
+        self.setupPins()
 
     def setupPins(self):
         GPIO.setup(self.pin1,GPIO.OUT)
@@ -50,9 +52,10 @@ class LED(object):
 class Button(object):
     def __init__(self, inputPin):
         self.inputPin = inputPin
+        self.setupPin()
 
     def setupPin(self):
-        GPIO.setup(self.inputPin,RPIO.IN, pull_up_down=RPIO.PUD_UP)
+        GPIO.setup(self.inputPin,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def getInput(self):
         return GPIO.input(self.inputPin)
