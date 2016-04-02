@@ -60,7 +60,6 @@ class Main:
         self.root.mainloop()
 
     def timerFired(self):
-        print(self.getLEDStates())
         if not self.game.gameOver():
             # Check for LED button input
             for led in range(len(self.ledButtons)):
@@ -75,6 +74,7 @@ class Main:
                     self.states = self.getLEDStates()
                     # Pass input to the game
                     self.game.makeMove(self.states)
+                    time.sleep(0.2)
         # Update LEDs
         self.redrawAll()
         self.canvas.after(self.timerDelay, self.timerFired)
@@ -91,7 +91,7 @@ class Main:
     def getLEDStates(self):
         states = []
         for led in self.leds:
-            if led.state == 0:
+            if led.state == 7:
                 #one led is off
                 return False
             states.append(led.state)

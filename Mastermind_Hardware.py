@@ -9,7 +9,7 @@ class LED(object):
         self.pin2 = pin2
         self.pin3 = pin3
         self.outputValues = [False,False,False]
-        self.state = 0
+        self.state = 7
         self.setupPins()
         self.getState()
 
@@ -46,7 +46,7 @@ class LED(object):
 
     def increment(self):
         self.state+=1
-        if(self.state==7):
+        if(self.state>=7):
             self.state = 0
         self.getState()
 
