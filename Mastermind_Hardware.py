@@ -57,19 +57,6 @@ class Button(object):
     def getInput(self):
         return GPIO.input(self.inputPin)
 
-data:
-firstLed = LED(pin1,pin2,pin3)
-secondLed = LED(pin1,pin2,pin3)
-thirdLed = LED(pin1,pin2,pin3)
-fourthLed = LED(pin1,pin2,pin3)
-leds = [firstLed,secondLed,thirdLed,fourthLed]
-firstButton = Button(pin)
-secondButton = Button(pin)
-thirdButton = Button(pin)
-fourthButton = Button(pin)
-ledButtons = [firstButton,secondButton,thirdButton,fourthButton]
-commitButton = Button(pin)
-
 def returnStates():
     states = []
     for led in leds:
@@ -78,24 +65,3 @@ def returnStates():
             return False
         states.append(led.state)
     return states
-
-timerFired:
-for button in ledButtons:
-    if(button.getInput()==True):
-        if(button == firstButton):
-            firstLed.increment()
-        elif(button == secondButton):
-            secondLed.increment()
-        elif(button == thirdButton):
-            thirdLed.increment()
-        elif(button == fourthButton):
-            fourthLed.increment()
-        time.sleep(0.3)
-
-if(button.getInput()):
-    returnStates(data)
-
-
-
-
-

@@ -7,8 +7,21 @@ class Main:
 
 	def __init__(self, game=None, leds=None, buttons=None):
 		self.game = Mastermind()
-		self.leds = LED()
-		self.buttons = Buttons()
+
+		# Set up LEDs
+		firstLed = LED(pin1,pin2,pin3)
+		secondLed = LED(pin1,pin2,pin3)
+		thirdLed = LED(pin1,pin2,pin3)
+		fourthLed = LED(pin1,pin2,pin3)
+		self.leds = [firstLed, secondLed, thirdLed, fourthLed]
+
+		# Set up buttons
+		firstButton = Button(pin)
+		secondButton = Button(pin)
+		thirdButton = Button(pin)
+		fourthButton = Button(pin)
+		self.ledButtons = [firstButton, secondButton, thirdButton, fourthButton]
+		self.commitButton = Button(pin)
 
 		# Tk interface
 		self.root = Tk()
@@ -32,10 +45,17 @@ class Main:
 		self.root.mainloop()
 
 	def timerFired(self):
-		# Check for button input
+		# Check for LED button input
+		for button in range(len(self.ledButtons)):
+			if self.ledButtons[button].getInput() == True:
+				# If button pressed, cycle through colors
+				self.ledButtons[button].increment()
+
 		# Store current input state
 			# Update LEDs
 		# If commit button is pressed
+		if commitButton.getInput():
+			returnStates(data)
 			# check for valid input
 				# Pass input to the game
 				# Update the game
@@ -48,6 +68,16 @@ class Main:
 		self.canvas.delete(ALL)
 		# Drawing code here
 		self.canvas.update()
+
+
+	def returnStates():
+		states = []
+		for led in leds:
+			if(led.state == 0):
+				#one led is off
+				return False
+			states.append(led.state)
+		return states
 
 main = Main()
 main.run()
