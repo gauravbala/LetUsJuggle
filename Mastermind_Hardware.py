@@ -56,12 +56,3 @@ class Button(object):
 
     def getInput(self):
         return GPIO.input(self.inputPin)
-
-def returnStates():
-    states = []
-    for led in leds:
-        if(led.state == 0):
-            #one led is off
-            return False
-        states.append(led.state)
-    return states

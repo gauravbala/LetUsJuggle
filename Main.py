@@ -46,16 +46,16 @@ class Main:
 
 	def timerFired(self):
 		# Check for LED button input
-		for button in range(len(self.ledButtons)):
-			if self.ledButtons[button].getInput() == True:
+		for led in range(len(self.ledButtons)):
+			if self.ledButtons[led].getInput() == True:
 				# If button pressed, cycle through colors
-				self.ledButtons[button].increment()
+				self.leds[led].increment()
 
 		# Store current input state
 			# Update LEDs
 		# If commit button is pressed
 		if commitButton.getInput():
-			returnStates(data)
+			self.states = self.getLEDStates()
 			# check for valid input
 				# Pass input to the game
 				# Update the game
@@ -69,11 +69,10 @@ class Main:
 		# Drawing code here
 		self.canvas.update()
 
-
-	def returnStates():
+	def getLEDStates(self):
 		states = []
-		for led in leds:
-			if(led.state == 0):
+		for led in self.leds:
+			if led.state == 0:
 				#one led is off
 				return False
 			states.append(led.state)
